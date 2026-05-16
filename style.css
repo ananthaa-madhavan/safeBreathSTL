@@ -189,3 +189,31 @@ p {
 .heat-red {
   background: #e74c3c;
 }
+
+.pm-toggle {
+  position: absolute;
+  top: 110px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1000;
+  display: flex;
+  gap: 10px;
+}
+
+.pm-toggle button {
+  background: #1f5fa8;
+  color: white;
+  border: none;
+  padding: 8px 14px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 500;
+}
+
+.pm-toggle button:hover {
+  background: #2c7be5;
+}
+
+.pm-toggle button.active {
+  background: #0b2a4a;
+}
