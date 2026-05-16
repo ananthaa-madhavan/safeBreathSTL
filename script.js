@@ -4,6 +4,26 @@
 // ===============================
 
 // ---------- PARTICLES ----------
+
+let heatLayer = L.layerGroup().addTo(map);
+
+function addHeat(p) {
+  let val = p.pm25;
+
+  let colorClass =
+    val < 20 ? "heat-green" :
+    val < 50 ? "heat-yellow" :
+    val < 80 ? "heat-orange" :
+    "heat-red";
+
+  const heatIcon = L.divIcon({
+    className: "",
+    html: `<div class="heat-dot ${colorClass}"></div>`,
+    iconSize: [40, 40]
+  });
+
+  L.marker([p.lat, p.lon], { icon: heatIcon }).addTo(heatLayer);
+}
 function spawnParticles() {
   const colors = ["green", "yellow", "orange", "red"];
 
