@@ -201,6 +201,10 @@ p {
    PM TOGGLE PANEL (FIXED)
 ======================= */
 
+.pm-toggle::before {
+  content: "PM Layers";
+  color: white;   /* 👈 this is the fix */
+}
 .pm-toggle {
   position: absolute;
   top: 110px;
