@@ -114,3 +114,50 @@ p {
   height: 100vh;
   width: 100vw;
 }
+
+/* =========================
+   TOP BANNER
+========================= */
+
+.top-banner {
+  background: #0b2a4a;
+  color: white;
+  padding: 16px 24px;
+  font-size: 22px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
+
+/* =========================
+   NAV BUTTON BAR
+========================= */
+
+.navbar {
+  background: #0f3b66;
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  padding: 10px;
+  position: sticky;
+  top: 56px;
+  z-index: 999;
+}
+
+/* buttons */
+.navbar a {
+  color: white;
+  text-decoration: none;
+  padding: 8px 14px;
+  border-radius: 8px;
+  background: #1f5fa8;
+  font-weight: 500;
+  transition: 0.2s;
+}
+
+.navbar a:hover {
+  background: #2c7be5;
+}
