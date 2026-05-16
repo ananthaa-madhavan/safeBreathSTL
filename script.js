@@ -1,6 +1,6 @@
 
 // ===============================
-// SAFEBREATHSTL GLOBAL SCRIPT
+// BreathSafeSTL GLOBAL SCRIPT
 // ===============================
 
 // ---------- PARTICLES ----------
@@ -69,7 +69,7 @@ function initMap() {
 
 // ---------- INIT SAFE WRAPPER ----------
 window.onload = function () {
-  console.log("SafeBreathSTL script loaded");
+  console.log("BreathSafeSTL script loaded");
 
   // only spawn particles if body exists (always true, but safe)
   spawnParticles();
