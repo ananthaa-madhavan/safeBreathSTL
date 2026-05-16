@@ -1,4 +1,3 @@
-
 /* =======================
    BASE
 ======================= */
@@ -28,15 +27,16 @@ body::before {
 }
 
 /* =======================
-   PARTICLES LAYER
+   PARTICLES LAYER (FIXED)
 ======================= */
 
 .particle {
   position: fixed;
   border-radius: 50%;
-  z-index: 2;
+  z-index: 1;
   opacity: 0.75;
   box-shadow: 0 0 8px rgba(0,0,0,0.15);
+  pointer-events: none;
 }
 
 /* colors */
@@ -44,6 +44,17 @@ body::before {
 .yellow { background: #f1c40f; }
 .orange { background: #e67e22; }
 .red { background: #e74c3c; }
+
+/* =======================
+   MAP LAYER
+======================= */
+
+#map {
+  height: 100vh;
+  width: 100vw;
+  position: relative;
+  z-index: 0;
+}
 
 /* =======================
    CONTENT
@@ -69,7 +80,7 @@ p {
 }
 
 /* =======================
-   NAV BUTTONS
+   ABOUT CARDS
 ======================= */
 
 .about-card {
@@ -97,6 +108,10 @@ p {
   font-size: 15px;
 }
 
+/* =======================
+   LINKS (fallback)
+======================= */
+
 .links {
   margin-top: 25px;
 }
@@ -111,13 +126,9 @@ p {
   text-decoration: none;
   font-weight: 600;
 }
-#map {
-  height: 100vh;
-  width: 100vw;
-}
 
 /* =========================
-   TOP BANNER
+   TOP BANNER (FIXED Z)
 ========================= */
 
 .top-banner {
@@ -130,11 +141,11 @@ p {
   box-shadow: 0 4px 15px rgba(0,0,0,0.2);
   position: sticky;
   top: 0;
-  z-index: 1000;
+  z-index: 5000;
 }
 
 /* =========================
-   NAV BUTTON BAR
+   NAVBAR (FIXED Z)
 ========================= */
 
 .navbar {
@@ -145,10 +156,9 @@ p {
   padding: 10px;
   position: sticky;
   top: 56px;
-  z-index: 999;
+  z-index: 4000;
 }
 
-/* buttons */
 .navbar a {
   color: white;
   text-decoration: none;
@@ -163,7 +173,10 @@ p {
   background: #2c7be5;
 }
 
-/* heat layer container */
+/* =======================
+   HEAT LAYER
+======================= */
+
 .heat-dot {
   position: absolute;
   border-radius: 50%;
@@ -173,29 +186,20 @@ p {
   opacity: 0.35;
 }
 
-/* colors */
-.heat-green {
-  background: #2ecc71;
-}
+.heat-green { background: #2ecc71; }
+.heat-yellow { background: #f1c40f; }
+.heat-orange { background: #e67e22; }
+.heat-red { background: #e74c3c; }
 
-.heat-yellow {
-  background: #f1c40f;
-}
-
-.heat-orange {
-  background: #e67e22;
-}
-
-.heat-red {
-  background: #e74c3c;
-}
-
+/* =======================
+   PM TOGGLE PANEL (FIXED)
+======================= */
 
 .pm-toggle {
   position: absolute;
   top: 110px;
   right: 15px;
-  z-index: 1000;
+  z-index: 3000;
 
   display: flex;
   flex-direction: column;
@@ -209,17 +213,6 @@ p {
   width: 120px;
 }
 
-/* optional label (if you add one later) */
-.pm-toggle::before {
-  content: "PM Layers";
-  color: white;
-  font-size: 13px;
-  font-weight: 600;
-  margin-bottom: 4px;
-  text-align: center;
-  display: block;
-}
-
 /* buttons */
 .pm-toggle button {
   background: rgba(255,255,255,0.1);
@@ -231,7 +224,6 @@ p {
 
   cursor: pointer;
   font-size: 13px;
-
   transition: 0.2s;
 }
 
@@ -239,7 +231,6 @@ p {
   background: rgba(255,255,255,0.25);
 }
 
-/* active state */
 .pm-toggle button.active {
   background: white;
   color: #0b2a4a;
