@@ -35,7 +35,7 @@ function initMap() {
     return;
   }
 
-  const map = L.map("map").setView([38.6270, -90.1994], 10);
+  const map = L.map("map").setView([38.6631, -90.5771], 13);
 
   L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
     attribution: "&copy; OpenStreetMap contributors"
