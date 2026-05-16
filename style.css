@@ -190,35 +190,8 @@ p {
   background: #e74c3c;
 }
 
+
 .pm-toggle {
-  position: absolute;
-  top: 110px;
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 1000;
-  display: flex;
-  gap: 10px;
-}
-
-.pm-toggle button {
-  background: #1f5fa8;
-  color: white;
-  border: none;
-  padding: 8px 14px;
-  border-radius: 8px;
-  cursor: pointer;
-  font-weight: 500;
-}
-
-.pm-toggle button:hover {
-  background: #2c7be5;
-}
-
-.pm-toggle button.active {
-  background: #0b2a4a;
-}
-
-.pm-panel {
   position: absolute;
   top: 110px;
   right: 15px;
@@ -236,18 +209,19 @@ p {
   width: 120px;
 }
 
-/* title */
-.pm-title {
+/* optional label (if you add one later) */
+.pm-toggle::before {
+  content: "PM Layers";
   color: white;
   font-size: 13px;
   font-weight: 600;
   margin-bottom: 4px;
-  opacity: 0.9;
   text-align: center;
+  display: block;
 }
 
 /* buttons */
-.pm-panel button {
+.pm-toggle button {
   background: rgba(255,255,255,0.1);
   color: white;
   border: 1px solid rgba(255,255,255,0.15);
@@ -261,12 +235,12 @@ p {
   transition: 0.2s;
 }
 
-.pm-panel button:hover {
+.pm-toggle button:hover {
   background: rgba(255,255,255,0.25);
 }
 
 /* active state */
-.pm-panel button.active {
+.pm-toggle button.active {
   background: white;
   color: #0b2a4a;
   font-weight: 600;
