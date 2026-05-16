@@ -1,28 +1,69 @@
-/* ====== GLOBAL ====== */
+
+/* ===== BASE ===== */
 body {
   margin: 0;
   font-family: "Segoe UI", system-ui, Arial, sans-serif;
-  background: #f4f7fb;
   color: #1f2d3d;
+  background-color: #ffffff;
+  overflow-x: hidden;
 }
 
-/* ====== LAYOUT ====== */
+/* ===== GRID BACKGROUND (LAB PAPER FEEL) ===== */
+body::before {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image:
+    linear-gradient(to right, rgba(0,0,0,0.05) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(0,0,0,0.05) 1px, transparent 1px);
+  background-size: 40px 40px;
+  z-index: -2;
+}
+
+/* ===== FLOATING PARTICLE LAYER ===== */
+.particle {
+  position: fixed;
+  border-radius: 50%;
+  opacity: 0.6;
+  z-index: -1;
+  animation: float 10s infinite ease-in-out;
+}
+
+/* Colors = air quality states */
+.green { background: #2ecc71; }
+.yellow { background: #f1c40f; }
+.orange { background: #e67e22; }
+.red { background: #e74c3c; }
+
+/* random motion */
+@keyframes float {
+  0%   { transform: translateY(0px); }
+  50%  { transform: translateY(-20px); }
+  100% { transform: translateY(0px); }
+}
+
+/* ===== MAIN CONTAINER ===== */
 .container {
   max-width: 1000px;
   margin: 70px auto;
   padding: 20px;
   text-align: center;
+  position: relative;
+  z-index: 2;
 }
 
-/* ====== TITLE ====== */
+/* ===== TITLE ===== */
 h1 {
-  font-size: 54px;
-  margin-bottom: 8px;
-  color: #1b4d89;
+  font-size: 52px;
+  margin-bottom: 10px;
   letter-spacing: 0.5px;
+  color: #1b4d89;
 }
 
-/* ====== TEXT ====== */
+/* ===== TEXT ===== */
 p {
   font-size: 17px;
   color: #4b5b6b;
@@ -30,11 +71,11 @@ p {
 }
 
 .sub {
-  font-size: 14px;
+  font-size: 13px;
   color: #7a8a9a;
 }
 
-/* ====== NAV BUTTONS ====== */
+/* ===== NAV BUTTONS ===== */
 .links {
   margin-top: 30px;
   display: flex;
@@ -51,57 +92,30 @@ p {
   text-decoration: none;
   font-weight: 600;
   font-size: 14px;
-  transition: all 0.2s ease;
+  transition: 0.2s ease;
   box-shadow: 0 6px 14px rgba(0,0,0,0.08);
 }
 
 .links a:hover {
-  background: #1b5fc2;
   transform: translateY(-2px);
+  background: #1b5fc2;
 }
 
-/* ====== DASHBOARD GRID ====== */
+/* ===== CARDS ===== */
+.card {
+  background: rgba(255,255,255,0.85);
+  backdrop-filter: blur(4px);
+  border-radius: 14px;
+  padding: 18px;
+  margin-top: 20px;
+  border: 1px solid rgba(0,0,0,0.06);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.05);
+}
+
+/* ===== GRID ===== */
 .grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
   gap: 18px;
-  margin-top: 40px;
-}
-
-/* ====== CARDS ====== */
-.card {
-  background: white;
-  border-radius: 16px;
-  padding: 18px 20px;
-  text-align: left;
-  box-shadow: 0 10px 25px rgba(0,0,0,0.06);
-  transition: all 0.2s ease;
-  border: 1px solid rgba(0,0,0,0.04);
-}
-
-.card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 16px 35px rgba(0,0,0,0.10);
-}
-
-/* card headings */
-.card h3 {
-  margin: 0 0 8px 0;
-  color: #1b4d89;
-}
-
-/* ====== STATUS COLORS (VERY IMPORTANT FOR "REAL UI" FEEL) ====== */
-.status-good {
-  color: #1f9d55;
-  font-weight: 600;
-}
-
-.status-medium {
-  color: #f0ad4e;
-  font-weight: 600;
-}
-
-.status-bad {
-  color: #e3342f;
-  font-weight: 600;
+  margin-top: 35px;
 }
