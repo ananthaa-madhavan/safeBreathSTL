@@ -30,15 +30,21 @@ body::before {
    PARTICLES LAYER (FIXED)
 ======================= */
 
+
 .particle {
   position: fixed;
   border-radius: 50%;
-  z-index: 1;
-  opacity: 0.75;
+  z-index: 0; /* 👈 pushed BEHIND map */
+  opacity: 0.6;
   box-shadow: 0 0 8px rgba(0,0,0,0.15);
   pointer-events: none;
 }
 
+/* make sure map sits above particles */
+#map {
+  z-index: 1;
+  position: relative;
+}
 /* colors */
 .green { background: #2ecc71; }
 .yellow { background: #f1c40f; }
