@@ -32,10 +32,19 @@ function spawnParticles() {
 }
 
 // ===============================
-// HEAT LAYER FUNCTION
+// VALUE SELECTOR
+// ===============================
+function getValue(p) {
+  return currentPM === "pm1" ? p.pm1 :
+         currentPM === "pm10" ? p.pm10 :
+         p.pm25;
+}
+
+// ===============================
+// HEAT LAYER
 // ===============================
 function addHeat(p, value) {
-  let colorClass =
+  const colorClass =
     value < 20 ? "heat-green" :
     value < 50 ? "heat-yellow" :
     value < 80 ? "heat-orange" :
@@ -47,22 +56,17 @@ function addHeat(p, value) {
     iconSize: [40, 40]
   });
 
-  L.marker([p.lat, p.lon], { icon: heatIcon }).addTo(heatLayer);
-}
-
-// ===============================
-// PM VALUE SELECTOR
-// ===============================
-function getValue(p) {
-  return currentPM === "pm1" ? p.pm1 :
-         currentPM === "pm10" ? p.pm10 :
-         p.pm25;
+  if (heatLayer) {
+    L.marker([p.lat, p.lon], { icon: heatIcon }).addTo(heatLayer);
+  }
 }
 
 // ===============================
 // RENDER DATA
 // ===============================
 function renderData() {
+  if (!dotLayer || !heatLayer) return;
+
   const data = [
     { lat: 38.65, lon: -90.55, pm1: 10, pm25: 30, pm10: 60 },
     { lat: 38.63, lon: -90.52, pm1: 15, pm25: 55, pm10: 90 },
@@ -102,7 +106,6 @@ function initMap() {
     attribution: "&copy; OpenStreetMap contributors"
   }).addTo(window.mapInstance);
 
-  // create layers ONCE
   dotLayer = L.layerGroup().addTo(window.mapInstance);
   heatLayer = L.layerGroup().addTo(window.mapInstance);
 
@@ -113,23 +116,29 @@ function initMap() {
 }
 
 // ===============================
-// TOGGLE PM
+// PM TOGGLE (FIXED + STABLE)
 // ===============================
 function setPM(type) {
   currentPM = type;
 
   document.querySelectorAll(".pm-toggle button").forEach(btn => {
     btn.classList.remove("active");
+
+    if (
+      (type === "pm25" && btn.textContent.includes("PM2.5")) ||
+      (type === "pm1" && btn.textContent.includes("PM1")) ||
+      (type === "pm10" && btn.textContent.includes("PM10"))
+    ) {
+      btn.classList.add("active");
+    }
   });
 
-  const activeBtn = document.querySelector(
-    `.pm-toggle button[onclick="setPM('${type}')"]`
-  );
-
-  if (activeBtn) activeBtn.classList.add("active");
-
   if (dotLayer) dotLayer.clearLayers();
-  if (heatLayer) heatLayer.clearLayers();
+
+  if (heatLayer) {
+    heatLayer.clearLayers();
+    heatLayer = L.layerGroup().addTo(window.mapInstance);
+  }
 
   renderData();
 }
@@ -139,6 +148,9 @@ function setPM(type) {
 // ===============================
 window.onload = function () {
   spawnParticles();
-  initMap();
-  renderData();
+
+  if (document.getElementById("map")) {
+    initMap();
+    renderData();
+  }
 };
