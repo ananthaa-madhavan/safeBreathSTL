@@ -2,7 +2,9 @@ let currentPM = "pm25";
 
 let mapInstance = null;
 let dotLayer = null;
-let heatLayer = null;
+
+let firebaseData = {};
+let isAdmin = false; // ✅ FIX
 
 // ===============================
 // PARTICLES
@@ -59,7 +61,6 @@ function initMap() {
   }).addTo(mapInstance);
 
   dotLayer = L.layerGroup().addTo(mapInstance);
-  heatLayer = L.layerGroup().addTo(mapInstance);
 
   const bounds = L.latLngBounds(
     [38.45, -90.85],
@@ -72,28 +73,25 @@ function initMap() {
     mapInstance.panInsideBounds(bounds, { animate: false });
   });
 
-  // ✅ FIX 1: attach AFTER map exists
   mapInstance.on("moveend", updateWeatherTiles);
 }
 
 // ===============================
-// RENDER DATA
+// FIREBASE LOAD (FIXED STYLE)
 // ===============================
-import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
-
-const db = getDatabase();
-
-let firebaseData = {};
-
 function loadData() {
-  const dataRef = ref(db, "readings");
+  const dataRef = firebase.database().ref("readings");
 
-  onValue(dataRef, (snapshot) => {
+  dataRef.on("value", (snapshot) => {
     firebaseData = snapshot.val() || {};
     renderData(Object.entries(firebaseData));
   });
 }
-function renderData(entries) {
+
+// ===============================
+// RENDER
+// ===============================
+function renderData(entries = []) {
 
   dotLayer.clearLayers();
 
@@ -114,31 +112,31 @@ function renderData(entries) {
 
   });
 }
-import { remove, ref } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
-function deleteReading(id) {
-  if (!isAdmin) {
-    alert("Not admin");
-    return;
-  }
-
-  remove(ref(db, "readings/" + id));
-}
 // ===============================
-// PM TOGGLE
+// DELETE (ADMIN ONLY)
+// ===============================
+function deleteReading(id) {
+  if (!isAdmin) return alert("Not admin");
+
+  firebase.database().ref("readings/" + id).remove();
+}
+
+// ===============================
+// PM SWITCH (FIXED)
 // ===============================
 function setPM(type) {
   currentPM = type;
 
   document.querySelectorAll(".pm-toggle button").forEach(btn => {
-    btn.classList.toggle("active", btn.dataset.pm === type);
+    btn.classList.toggle("active", btn.getAttribute("onclick").includes(type));
   });
 
-  renderData();
+  renderData(Object.entries(firebaseData));
 }
 
 // ===============================
-// WEATHER API
+// WEATHER
 // ===============================
 async function fetchWeather(lat, lon) {
   const url =
@@ -148,9 +146,7 @@ async function fetchWeather(lat, lon) {
     `&timezone=auto`;
 
   const res = await fetch(url);
-  const data = await res.json();
-
-  return data.current;
+  return (await res.json()).current;
 }
 
 function weatherCodeToText(code) {
@@ -177,7 +173,7 @@ function getMapCenter() {
 }
 
 // ===============================
-// UPDATE TILES
+// TILES
 // ===============================
 async function updateWeatherTiles() {
   const center = getMapCenter();
@@ -191,13 +187,12 @@ async function updateWeatherTiles() {
   document.getElementById("uvTile").innerText =
     weather.uv_index;
 
-  // ✅ FIX 2: convert code → text
   document.getElementById("weatherTile").innerText =
     weatherCodeToText(weather.weather_code);
 }
 
 // ===============================
-// INIT
+// START
 // ===============================
 window.onload = function () {
   spawnParticles();
