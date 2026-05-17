@@ -131,7 +131,22 @@ async function fetchWeather(lat, lon) {
 
   return data.current;
 }
+function weatherCodeToText(code) {
+  const map = {
+    0: "Clear",
+    1: "Mostly Clear",
+    2: "Partly Cloudy",
+    3: "Cloudy",
+    45: "Fog",
+    51: "Drizzle",
+    61: "Rain",
+    71: "Snow",
+    80: "Showers",
+    95: "Storm"
+  };
 
+  return map[code] || "Unknown";
+}
 function getMapCenter() {
   if (!mapInstance) return null;
   const c = mapInstance.getCenter();
