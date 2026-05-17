@@ -5,7 +5,7 @@ let dotLayer = null;
 let heatLayer = null;
 
 // ===============================
-// PARTICLES (ALL PAGES)
+// PARTICLES
 // ===============================
 function spawnParticles() {
   const colors = ["green", "yellow", "orange", "red"];
@@ -40,11 +40,10 @@ function getValue(p) {
 }
 
 // ===============================
-// MAP INIT (WITH BOUNDS FIX)
+// MAP INIT
 // ===============================
 function initMap() {
   const mapDiv = document.getElementById("map");
-  mapInstance.on("moveend", updateWeatherTiles);
   if (!mapDiv) return;
 
   mapInstance = L.map("map", {
@@ -72,6 +71,9 @@ function initMap() {
   mapInstance.on("drag", () => {
     mapInstance.panInsideBounds(bounds, { animate: false });
   });
+
+  // ✅ FIX 1: attach AFTER map exists
+  mapInstance.on("moveend", updateWeatherTiles);
 }
 
 // ===============================
@@ -106,12 +108,11 @@ function renderData() {
 }
 
 // ===============================
-// PM TOGGLE (FIXED)
+// PM TOGGLE
 // ===============================
 function setPM(type) {
   currentPM = type;
 
-  // update button UI state
   document.querySelectorAll(".pm-toggle button").forEach(btn => {
     btn.classList.toggle("active", btn.dataset.pm === type);
   });
@@ -119,6 +120,9 @@ function setPM(type) {
   renderData();
 }
 
+// ===============================
+// WEATHER API
+// ===============================
 async function fetchWeather(lat, lon) {
   const url =
     `https://api.open-meteo.com/v1/forecast` +
@@ -131,6 +135,7 @@ async function fetchWeather(lat, lon) {
 
   return data.current;
 }
+
 function weatherCodeToText(code) {
   const map = {
     0: "Clear",
@@ -147,12 +152,16 @@ function weatherCodeToText(code) {
 
   return map[code] || "Unknown";
 }
+
 function getMapCenter() {
   if (!mapInstance) return null;
   const c = mapInstance.getCenter();
   return { lat: c.lat, lon: c.lng };
 }
 
+// ===============================
+// UPDATE TILES
+// ===============================
 async function updateWeatherTiles() {
   const center = getMapCenter();
   if (!center) return;
@@ -165,8 +174,9 @@ async function updateWeatherTiles() {
   document.getElementById("uvTile").innerText =
     weather.uv_index;
 
+  // ✅ FIX 2: convert code → text
   document.getElementById("weatherTile").innerText =
-    weather.weather_code;
+    weatherCodeToText(weather.weather_code);
 }
 
 // ===============================
@@ -178,5 +188,8 @@ window.onload = function () {
   if (document.getElementById("map")) {
     initMap();
     renderData();
+
+    // ✅ FIX 3: initial load so tiles aren't empty
+    updateWeatherTiles();
   }
 };
