@@ -7,10 +7,7 @@
   <link rel="stylesheet" href="style.css">
 
   <!-- LEAFLET -->
-  <link
-    rel="stylesheet"
-    href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
-  >
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <script src="https://unpkg.com/leaflet.heat/dist/leaflet-heat.js"></script>
@@ -32,41 +29,29 @@
 
   <!-- PM TOGGLE PANEL -->
   <div class="pm-toggle">
+    <div class="pm-title">PM Layers</div>
 
-    <div class="pm-title">
-      PM Layers
-    </div>
+    <button onclick="setPM('pm1')">PM1</button>
+    <button onclick="setPM('pm25')" class="active">PM2.5</button>
+    <button onclick="setPM('pm10')">PM10</button>
+  </div>
 
-    <button onclick="setPM('pm1')">
-      PM1
-    </button>
-
-    <button onclick="setPM('pm25')" class="active">
-      PM2.5
-    </button>
-
-    <button onclick="setPM('pm10')">
-      PM10
-    </button>
-
+  <!-- 🌡 LEFT DATA PANEL -->
+  <div id="data-panel">
+    <div class="tile" id="tempTile">Loading temperature...</div>
+    <div class="tile" id="weatherTile">Loading weather...</div>
+    <div class="tile" id="uvTile">Loading UV index...</div>
+    <div class="tile" id="aqTile">Loading air quality...</div>
   </div>
 
   <!-- MAP -->
   <div id="map"></div>
 
-  <!-- FOREGROUND CONTENT -->
+  <!-- MAIN CONTENT (optional overlay text) -->
   <div class="container">
-
     <h1>BreathSafeSTL</h1>
-
-    <p>
-      St. Louis Air Quality & Allergen Monitoring System
-    </p>
-
-    <p class="sub">
-      Live dashboard coming soon.
-    </p>
-
+    <p>St. Louis Air Quality & Allergen Monitoring System</p>
+    <p class="sub">Live dashboard coming soon.</p>
   </div>
 
   <!-- SCRIPT -->
