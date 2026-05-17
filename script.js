@@ -1,14 +1,11 @@
-
 let currentPM = "pm25";
 
-// ===============================
-// GLOBAL LAYERS
-// ===============================
+let mapInstance = null;
 let dotLayer = null;
 let heatLayer = null;
 
 // ===============================
-// PARTICLES
+// PARTICLES (only for non-map pages)
 // ===============================
 function spawnParticles() {
   if (document.getElementById("map")) return;
@@ -34,7 +31,7 @@ function spawnParticles() {
 }
 
 // ===============================
-// VALUE SELECTOR
+// SELECT VALUE BASED ON PM TYPE
 // ===============================
 function getValue(p) {
   return currentPM === "pm1" ? p.pm1 :
@@ -43,42 +40,76 @@ function getValue(p) {
 }
 
 // ===============================
-// HEAT LAYER
+// CREATE HEAT DATA
 // ===============================
-function addHeat(p, value) {
-  const colorClass =
-    value < 20 ? "heat-green" :
-    value < 50 ? "heat-yellow" :
-    value < 80 ? "heat-orange" :
-    "heat-red";
+function buildHeatData(data) {
+  return data.map(p => {
+    const value = getValue(p);
 
-  const heatIcon = L.divIcon({
-    className: "",
-    html: `<div class="heat-dot ${colorClass}"></div>`,
-    iconSize: [40, 40]
+    // normalize to 0–1 range
+    const intensity = Math.min(value / 120, 1);
+
+    return [p.lat, p.lon, intensity];
   });
-
-  if (heatLayer) {
-    L.marker([p.lat, p.lon], { icon: heatIcon }).addTo(heatLayer);
-  }
 }
 
 // ===============================
-// DATA RENDER
+// INIT MAP
+// ===============================
+function initMap() {
+  if (!document.getElementById("map")) return;
+
+  mapInstance = L.map("map").setView([38.6631, -90.5771], 12);
+
+  L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+    attribution: "&copy; OpenStreetMap contributors"
+  }).addTo(mapInstance);
+
+  dotLayer = L.layerGroup().addTo(mapInstance);
+
+  heatLayer = L.heatLayer([], {
+    radius: 40,
+    blur: 25,
+    maxZoom: 17,
+    gradient: {
+      0.0: "green",
+      0.4: "yellow",
+      0.7: "orange",
+      1.0: "red"
+    }
+  }).addTo(mapInstance);
+
+  mapInstance.setMaxBounds([
+    [38.45, -90.85],
+    [38.85, -90.25]
+  ]);
+}
+
+// ===============================
+// RENDER DATA
 // ===============================
 function renderData() {
+  if (!mapInstance) return;
+
   const data = [
     { lat: 38.65, lon: -90.55, pm1: 10, pm25: 30, pm10: 60 },
     { lat: 38.63, lon: -90.52, pm1: 15, pm25: 55, pm10: 90 },
     { lat: 38.60, lon: -90.50, pm1: 25, pm25: 80, pm10: 120 }
   ];
 
+  // clear dots
+  dotLayer.clearLayers();
+
+  // update heatmap
+  const heatData = buildHeatData(data);
+  heatLayer.setLatLngs(heatData);
+
+  // add dots
   data.forEach(p => {
     const value = getValue(p);
 
-    // DOTS
     L.circleMarker([p.lat, p.lon], {
-      radius: 5,
+      radius: 6,
       color: "black",
       weight: 1,
       fillColor:
@@ -87,36 +118,11 @@ function renderData() {
         "#e74c3c",
       fillOpacity: 0.9
     }).addTo(dotLayer);
-
-    // HEAT
-    addHeat(p, value);
   });
 }
 
 // ===============================
-// MAP INIT
-// ===============================
-function initMap() {
-  const mapDiv = document.getElementById("map");
-  if (!mapDiv) return;
-
-  window.mapInstance = L.map("map").setView([38.6631, -90.5771], 13);
-
-  L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-    attribution: "&copy; OpenStreetMap contributors"
-  }).addTo(window.mapInstance);
-
-  dotLayer = L.layerGroup().addTo(window.mapInstance);
-  heatLayer = L.layerGroup().addTo(window.mapInstance);
-
-  window.mapInstance.setMaxBounds([
-    [38.45, -90.85],
-    [38.85, -90.25]
-  ]);
-}
-
-// ===============================
-// PM TOGGLE (FIXED + SAFE)
+// PM TOGGLE
 // ===============================
 function setPM(type) {
   currentPM = type;
@@ -129,18 +135,11 @@ function setPM(type) {
     }
   });
 
-  if (dotLayer) dotLayer.clearLayers();
-
-  if (heatLayer && window.mapInstance) {
-    window.mapInstance.removeLayer(heatLayer);
-    heatLayer = L.layerGroup().addTo(window.mapInstance);
-  }
-
   renderData();
 }
 
 // ===============================
-// INIT
+// START
 // ===============================
 window.onload = function () {
   spawnParticles();
