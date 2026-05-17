@@ -79,19 +79,26 @@ function initMap() {
 // ===============================
 // RENDER DATA
 // ===============================
-function renderData() {
-  if (!mapInstance) return;
+import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
-  const data = [
-    { lat: 38.65, lon: -90.55, pm1: 10, pm25: 30, pm10: 60 },
-    { lat: 38.63, lon: -90.52, pm1: 15, pm25: 55, pm10: 90 },
-    { lat: 38.60, lon: -90.50, pm1: 25, pm25: 80, pm10: 120 }
-  ];
+const db = getDatabase();
+
+let firebaseData = {};
+
+function loadData() {
+  const dataRef = ref(db, "readings");
+
+  onValue(dataRef, (snapshot) => {
+    firebaseData = snapshot.val() || {};
+    renderData(Object.entries(firebaseData));
+  });
+}
+function renderData(entries) {
 
   dotLayer.clearLayers();
-  heatLayer.clearLayers();
 
-  data.forEach(p => {
+  entries.forEach(([id, p]) => {
+
     const v = getValue(p);
 
     L.circleMarker([p.lat, p.lon], {
@@ -104,9 +111,19 @@ function renderData() {
         "#e74c3c",
       fillOpacity: 0.9
     }).addTo(dotLayer);
+
   });
 }
+import { remove, ref } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
+function deleteReading(id) {
+  if (!isAdmin) {
+    alert("Not admin");
+    return;
+  }
+
+  remove(ref(db, "readings/" + id));
+}
 // ===============================
 // PM TOGGLE
 // ===============================
@@ -187,9 +204,6 @@ window.onload = function () {
 
   if (document.getElementById("map")) {
     initMap();
-    renderData();
-
-    // ✅ FIX 3: initial load so tiles aren't empty
-    updateWeatherTiles();
+    loadData();
   }
 };
