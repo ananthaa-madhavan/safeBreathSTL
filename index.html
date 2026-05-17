@@ -3,31 +3,25 @@
 <head>
   <title>BreathSafeSTL</title>
 
-  <!-- MAIN CSS -->
   <link rel="stylesheet" href="style.css">
 
-  <!-- LEAFLET -->
+  <!-- Leaflet -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
-
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <script src="https://unpkg.com/leaflet.heat/dist/leaflet-heat.js"></script>
 </head>
 
 <body>
 
-  <!-- TOP BANNER -->
-  <div class="top-banner">
-    BreathSafeSTL
-  </div>
+  <div class="top-banner">BreathSafeSTL</div>
 
-  <!-- NAVBAR -->
   <div class="navbar">
     <a href="index.html">Home</a>
     <a href="about.html">About</a>
     <a href="design.html">Design Process</a>
   </div>
 
-  <!-- PM TOGGLE PANEL -->
+  <!-- PM TOGGLE -->
   <div class="pm-toggle">
     <div class="pm-title">PM Layers</div>
 
@@ -36,25 +30,34 @@
     <button onclick="setPM('pm10')">PM10</button>
   </div>
 
-  <!-- 🌡 LEFT DATA PANEL -->
+  <!-- 🌡 DATA TILES -->
   <div id="data-panel">
-    <div class="tile" id="tempTile">Loading temperature...</div>
-    <div class="tile" id="weatherTile">Loading weather...</div>
-    <div class="tile" id="uvTile">Loading UV index...</div>
-    <div class="tile" id="aqTile">Loading air quality...</div>
+
+    <div class="tile">
+      <div class="label">TEMP</div>
+      <div class="value" id="tempTile">--</div>
+    </div>
+
+    <div class="tile">
+      <div class="label">WEATHER</div>
+      <div class="value" id="weatherTile">--</div>
+    </div>
+
+    <div class="tile">
+      <div class="label">UV INDEX</div>
+      <div class="value" id="uvTile">--</div>
+    </div>
+
+    <div class="tile">
+      <div class="label">AQI</div>
+      <div class="value" id="aqTile">--</div>
+    </div>
+
   </div>
 
   <!-- MAP -->
   <div id="map"></div>
 
-  <!-- MAIN CONTENT (optional overlay text) -->
-  <div class="container">
-    <h1>BreathSafeSTL</h1>
-    <p>St. Louis Air Quality & Allergen Monitoring System</p>
-    <p class="sub">Live dashboard coming soon.</p>
-  </div>
-
-  <!-- SCRIPT -->
   <script src="script.js"></script>
 
 </body>
