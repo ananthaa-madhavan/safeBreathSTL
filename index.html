@@ -3,17 +3,24 @@
 <head>
   <title>BreathSafeSTL</title>
 
+  <!-- MAIN CSS -->
   <link rel="stylesheet" href="style.css">
 
-  <!-- Leaflet -->
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+  <!-- LEAFLET -->
+  <link
+    rel="stylesheet"
+    href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+  >
+
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 </head>
 
 <body>
 
-  <!-- TOP HEADER -->
-  <div class="top-banner">BreathSafeSTL</div>
+  <!-- TOP BANNER -->
+  <div class="top-banner">
+    BreathSafeSTL
+  </div>
 
   <!-- NAVBAR -->
   <div class="navbar">
@@ -21,25 +28,47 @@
     <a href="about.html">About</a>
     <a href="design.html">Design Process</a>
   </div>
-<div class="pm-toggle">
-  <div class="pm-title">PM Layers</div>
 
-  <button onclick="setPM('pm1')">PM1</button>
-  <button onclick="setPM('pm25')">PM2.5</button>
-  <button onclick="setPM('pm10')">PM10</button>
-</div>
-</div>
-  <!-- MAP LAYER (background) -->
-  <div id="map"></div>
+  <!-- PM TOGGLE PANEL -->
+  <div class="pm-toggle">
 
-  <!-- UI CONTENT (foreground) -->
-  <div class="container">
-    <h1>BreathSafeSTL</h1>
-    <p>St. Louis Air Quality & Allergen Monitoring System</p>
-    <p class="sub">Live dashboard coming soon.</p>
+    <div class="pm-title">
+      PM Layers
+    </div>
+
+    <button onclick="setPM('pm1')">
+      PM1
+    </button>
+
+    <button onclick="setPM('pm25')" class="active">
+      PM2.5
+    </button>
+
+    <button onclick="setPM('pm10')">
+      PM10
+    </button>
+
   </div>
 
-  <!-- SCRIPT LAST (IMPORTANT) -->
+  <!-- MAP -->
+  <div id="map"></div>
+
+  <!-- FOREGROUND CONTENT -->
+  <div class="container">
+
+    <h1>BreathSafeSTL</h1>
+
+    <p>
+      St. Louis Air Quality & Allergen Monitoring System
+    </p>
+
+    <p class="sub">
+      Live dashboard coming soon.
+    </p>
+
+  </div>
+
+  <!-- SCRIPT -->
   <script src="script.js"></script>
 
 </body>
