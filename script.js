@@ -76,8 +76,9 @@ function initMap() {
 // ===============================
 // RENDER DATA (SAFE)
 // ===============================
-function renderData() {
-  if (!mapInstance || !dotLayer) return;
+ffunction renderData() {
+
+  if (!dotLayer || !heatLayer) return;
 
   const data = [
     { lat: 38.65, lon: -90.55, pm1: 10, pm25: 30, pm10: 60 },
@@ -86,23 +87,69 @@ function renderData() {
   ];
 
   dotLayer.clearLayers();
+  heatLayer.clearLayers();
 
-  data.forEach(p => {
+  data.forEach((p, i) => {
+
     const v = getValue(p);
 
+    // ===============================
+    // COLOR
+    // ===============================
+    let color =
+      v < 20 ? "#2ecc71" :
+      v < 50 ? "#f1c40f" :
+      v < 80 ? "#e67e22" :
+      "#e74c3c";
+
+    // ===============================
+    // FIND FURTHEST DISTANCE
+    // ===============================
+    let maxDist = 0;
+
+    data.forEach((other, j) => {
+
+      if (i === j) return;
+
+      const dist =
+        mapInstance.distance(
+          [p.lat, p.lon],
+          [other.lat, other.lon]
+        );
+
+      if (dist > maxDist) {
+        maxDist = dist;
+      }
+
+    });
+
+    // expand slightly
+    const auraRadius = maxDist * 1.1;
+
+    // ===============================
+    // AURA
+    // ===============================
+    L.circle([p.lat, p.lon], {
+      radius: auraRadius,
+      stroke: false,
+      fillColor: color,
+      fillOpacity: 0.12,
+      className: "soft-aura"
+    }).addTo(heatLayer);
+
+    // ===============================
+    // MAIN DOT
+    // ===============================
     L.circleMarker([p.lat, p.lon], {
-      radius: 6,
+      radius: 7,
       color: "black",
       weight: 1,
-      fillColor:
-        v < 20 ? "#2ecc71" :
-        v < 50 ? "#f1c40f" :
-        "#e74c3c",
-      fillOpacity: 0.9
+      fillColor: color,
+      fillOpacity: 1
     }).addTo(dotLayer);
+
   });
 }
-
 // ===============================
 // PM TOGGLE (SAFE)
 // ===============================
