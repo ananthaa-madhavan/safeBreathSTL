@@ -58,6 +58,7 @@ function initMap() {
   }).addTo(mapInstance);
 
   dotLayer = L.layerGroup().addTo(mapInstance);
+  heatLayer = L.layerGroup().addTo(mapInstance);
 
   const bounds = L.latLngBounds(
     [38.45, -90.85],
@@ -76,58 +77,82 @@ function initMap() {
 // ===============================
 // RENDER DATA (SAFE)
 // ===============================
-function renderData() {
 
-  if (!dotLayer || !heatLayer) return;
+const db = firebase.database();
 
-  const data = [
-    { lat: 38.65, lon: -90.55, pm1: 10, pm25: 30, pm10: 60 },
-    { lat: 38.63, lon: -90.52, pm1: 15, pm25: 55, pm10: 90 },
-    { lat: 38.60, lon: -90.50, pm1: 25, pm25: 80, pm10: 120 }
-  ];
+let liveData = [];
+
+function getData() {
+
+  const sensorRef = db.ref("sensorData");
+
+  // listen for new entries
+  sensorRef.on("child_added", (snapshot) => {
+
+    const d = snapshot.val();
+
+    const point = {
+      lat: d.lat,
+      lon: d.lon,
+      pm1: d.pm1,
+      pm25: d.pm25,
+      pm10: d.pm10,
+      timestamp: d.timestamp || Date.now()
+    };
+
+    liveData.push(point);
+
+    renderData(liveData);
+  });
+}
+
+function renderData(data) {
+
+  if (!mapInstance || !dotLayer || !heatLayer) return;
+  if (!data || data.length === 0) return;
 
   dotLayer.clearLayers();
   heatLayer.clearLayers();
 
   data.forEach((p, i) => {
 
-    const v = getValue(p);
+    // ===============================
+    // VALUE FUNCTION (make sure you have this)
+    // ===============================
+    const v = getValue(p); // e.g. AQI or pm25-based score
 
     // ===============================
-    // COLOR
+    // COLOR SCALE
     // ===============================
     let color =
       v < 20 ? "#2ecc71" :
       v < 50 ? "#f1c40f" :
       v < 80 ? "#e67e22" :
-      "#e74c3c";
+               "#e74c3c";
 
     // ===============================
-    // FIND FURTHEST DISTANCE
+    // FIND MAX DISTANCE
     // ===============================
     let maxDist = 0;
 
-    data.forEach((other, j) => {
+    for (let j = 0; j < data.length; j++) {
 
-      if (i === j) return;
+      if (i === j) continue;
 
-      const dist =
-        mapInstance.distance(
-          [p.lat, p.lon],
-          [other.lat, other.lon]
-        );
+      const dist = mapInstance.distance(
+        [p.lat, p.lon],
+        [data[j].lat, data[j].lon]
+      );
 
       if (dist > maxDist) {
         maxDist = dist;
       }
+    }
 
-    });
-
-    // expand slightly
     const auraRadius = maxDist * 1.1;
 
     // ===============================
-    // AURA
+    // AURA CIRCLE
     // ===============================
     L.circle([p.lat, p.lon], {
       radius: auraRadius,
@@ -140,14 +165,32 @@ function renderData() {
     // ===============================
     // MAIN DOT
     // ===============================
+    const time = new Date(p.timestamp).toLocaleString();
+
     L.circleMarker([p.lat, p.lon], {
       radius: 7,
       color: "black",
       weight: 1,
       fillColor: color,
       fillOpacity: 1
-    }).addTo(dotLayer);
+    })
+    .addTo(dotLayer)
+    .bindPopup(`
+      <b>Air Quality Point</b><br>
+      PM1: ${p.pm1}<br>
+      PM2.5: ${p.pm25}<br>
+      PM10: ${p.pm10}<br>
+      Time: ${time}
+    `);
 
+  });
+}
+function cleanOldData() {
+  const now = Date.now();
+  const DAY = 24 * 60 * 60 * 1000;
+
+  liveData = liveData.filter(p => {
+    return (now - p.timestamp) <= DAY;
   });
 }
 // ===============================
@@ -160,7 +203,7 @@ function setPM(type) {
     btn.classList.toggle("active", btn.dataset.pm === type);
   });
 
-  renderData();
+  renderData(liveData);
 }
 
 // ===============================
@@ -224,7 +267,13 @@ window.onload = function () {
 
   if (document.getElementById("map")) {
     initMap();
-    renderData();
+    getData();
     updateWeatherTiles();
+
+    // 🔥 ADD THIS HERE
+    setInterval(() => {
+      cleanOldData();
+      renderData(liveData);
+    }, 60 * 1000);
   }
 };
