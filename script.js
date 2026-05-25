@@ -76,7 +76,7 @@ function initMap() {
 // ===============================
 // RENDER DATA (SAFE)
 // ===============================
-ffunction renderData() {
+function renderData() {
 
   if (!dotLayer || !heatLayer) return;
 
