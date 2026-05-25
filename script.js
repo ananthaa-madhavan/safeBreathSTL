@@ -99,13 +99,13 @@ function getData() {
     const d = snapshot.val();
 
     const point = {
-      lat: d.lat,
-      lon: d.lon,
-      pm1: d.pm1,
-      pm25: d.pm25,
-      pm10: d.pm10,
-      timestamp: d.timestamp || Date.now()
-    };
+  lat: d.Latitude,
+  lon: d.Longitude,
+  pm1: d.PM10,
+  pm25: d.PM25,
+  pm10: d.PM100,
+  timestamp: new Date(d.DateTime).getTime()
+};
 
     liveData.push(point);
 
