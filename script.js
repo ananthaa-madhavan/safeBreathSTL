@@ -5,7 +5,7 @@ let dotLayer = null;
 let heatLayer = null;
 
 let mapReady = false; // ✅ FIX ADDED
-
+console.log("SCRIPT LOADED");
 // ===============================
 // PARTICLES
 // ===============================
