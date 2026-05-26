@@ -107,8 +107,6 @@ function getData() {
   timestamp: new Date(d.DateTime).getTime()
 };
 
-  cleanNearbyPoints(point);
-
 liveData.push(point);
 updatePointCounter();
     // ✅ FIX: prevent render before map is ready
@@ -190,27 +188,45 @@ function renderData(data) {
 // CLEAN OLD DATA (24 HOURS)
 // ===============================
 function cleanOldData() {
+
   const now = Date.now();
   const DAY = 24 * 60 * 60 * 1000;
+  const THREE_MILES = 4828;
 
+  // ===============================
+  // REMOVE OLD POINTS
+  // ===============================
   liveData = liveData.filter(p => {
     return (now - p.timestamp) <= DAY;
   });
-}
-function cleanNearbyPoints(newPoint) {
 
-  const THREE_MILES = 4828; // meters
+  // ===============================
+  // REMOVE NEARBY DUPLICATES
+  // ===============================
+  const cleaned = [];
 
-  liveData = liveData.filter(oldPoint => {
+  liveData.forEach(point => {
 
-    const dist = mapInstance.distance(
-      [newPoint.lat, newPoint.lon],
-      [oldPoint.lat, oldPoint.lon]
-    );
+    const tooClose = cleaned.some(existing => {
 
-    return dist > THREE_MILES;
+      const dist = mapInstance.distance(
+        [point.lat, point.lon],
+        [existing.lat, existing.lon]
+      );
+
+      return dist < THREE_MILES;
+    });
+
+    // keep only non-nearby points
+    if (!tooClose) {
+      cleaned.push(point);
+    }
+
   });
+
+  liveData = cleaned;
 }
+
 function updatePointCounter() {
   const counter = document.getElementById("pointCounter");
 
@@ -295,9 +311,14 @@ window.onload = function () {
     getData();
     updateWeatherTiles();
     
-    setInterval(() => {
-      cleanOldData();
-      updatePointCounter();
-    }, 60 * 1000);
+   setInterval(() => {
+
+  cleanOldData();
+
+  updatePointCounter();
+
+  renderData(liveData);
+
+}, 60 * 1000);
   }
 };
